@@ -28,3 +28,10 @@ The following are beginner tasks to familiarise the  basics of C:
 - You are not allowed to use the function puts
 - Your program should return 0
 - Your program should compile without warning when using the -Wall gcc option
+### 6. Size is not grandeur, and territory does not make a nation
+[6-size.c](./6-size.c) a program that prints the size of various types on the computer it is compiled and run on.
+- You should produce the exact same output as in the example
+- Warnings are allowed
+- Your program should return 0
+- You might have to install the package libc6-dev-i386 on your Linux (Vagrant) to test the -m32 gcc option
+
