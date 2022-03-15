@@ -1,6 +1,8 @@
 #ifndef HEADER_FILES
 #define HEADER_FILES
 
+int print_last_digit(int);
+
 int _abs(int);
 
 int print_sign(int n);
