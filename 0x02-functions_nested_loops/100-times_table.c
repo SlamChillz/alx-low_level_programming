@@ -1,64 +1,31 @@
+#include <stdio.h>
 #include "main.h"
 /**
  * print_times_table - print the times table until n
- *
  * @n: n times table to be printed
- *
- *Description: a function that prints the n times table, starting with 0.
- *
+ * Description: a function that prints the n times table, starting with 0.
  * Return: none (void)
  */
 void print_times_table(int n)
 {
-	int i;
-	int j;
+	int i, j, x;
 
 	if (n >= 0 && n <= 15)
 	{
-
-		for (i = 0; i <= n; i++)
+		i = 0;
+		while (i <= n)
 		{
-
-			for (j = 0; j <= n; j++)
+			j = 0;
+			while (j <= n)
 			{
-
-				if ((i * j) < 10)
-				{
-					if (j != 0)
-					{
-						_putchar(' ');
-						_putchar(' ');
-						_putchar(' ');
-					}
-					_putchar((j * i) + '0');
-				}
-
-				else if ((i * j) < 100)
-				{
-					_putchar(' ');
-					_putchar(' ');
-					_putchar((((j * i) / 10) % 10) + '0');
-					_putchar(((j * i) % 10) + '0');
-				}
-
-				else if ((i * j) < 1000)
-				{
-					_putchar(' ');
-					_putchar((((j * i) / 100) % 10) + '0');
-					_putchar((((j * i) / 10) % 10) + '0');
-					_putchar(((j * i) % 10) + '0');
-				}
-			if (j != (n))
-			{
-				_putchar(',');
+				x = i * j;
+				if (j == n)
+					printf("%3d\n", x);
+				else
+					printf("%3d, ", x);
+				j++;
 			}
-
-			}
-
-		_putchar('\n');
-
+			i++;
 		}
-
 	}
-
 }
