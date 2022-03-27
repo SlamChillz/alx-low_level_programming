@@ -12,20 +12,35 @@ void print_times_table(int n)
 
 	if (n >= 0 && n <= 15)
 	{
-		i = 0;
-		while (i <= n)
+		for (i = 0; i <= n; i++)
 		{
-			j = 0;
-			while (j <= n)
+			_putchar('0');
+			for (j = 1; j <= n; j++)
 			{
+				_putchar(',');
+				_putchar(' ');
 				x = i * j;
-				if (j == n)
-					printf("%3d\n", x);
+				if (x >= 100)
+				{
+					_putchar((x / 100) + '0');
+					_putchar(((x % 100) / 10) + '0');
+					_putchar(((x % 100) % 10) + '0');
+				}
+				else if (x >= 10)
+				{
+					_putchar(' ');
+					_putchar((x / 10) + '0');
+					_putchar((x % 10) + '0');
+				}
 				else
-					printf("%3d, ", x);
-				j++;
+				{
+					_putchar(' ');
+					_putchar(' ');
+					_putchar(x + '0');
+				}
 			}
-			i++;
+			_putchar('\n');
 		}
 	}
 }
+
