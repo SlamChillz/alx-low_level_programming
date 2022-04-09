@@ -1,127 +1,276 @@
 #include "main.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
 
 /**
- * _is_zero - determines if any number is zero
- * @argv: argument vector.
+ * printError - print error message
+ * @error: pointer to string, messgage to display
  *
- * Return: no return.
+ * Return: None, exit status = 98.
  */
-void _is_zero(char *argv[])
+void printError(char *error)
 {
-	int i, isn1 = 1, isn2 = 1;
+	int i;
 
-	for (i = 0; argv[1][i]; i++)
-		if (argv[1][i] != '0')
-		{
-			isn1 = 0;
-			break;
-		}
+	for (i = 0; error[i] != '\0'; i++)
+		_putchar(error[i]);
+	exit(98);
+}
 
-	for (i = 0; argv[2][i]; i++)
-		if (argv[2][i] != '0')
-		{
-			isn2 = 0;
-			break;
-		}
+/**
+ * checkInput - count argument given
+ * @argc: number of arguments, integer
+ * @error: pointer to string, error message.
+ *
+ * Return: None, exit status = 98, if argc < || > 3
+ */
+void checkInput(int argc, char *error)
+{
+	if (argc != 3)
+		printError(error);
+}
 
-	if (isn1 == 1 || isn2 == 1)
+/**
+ * validateInput - check if input contains integers only
+ * @argv: pointer to an array of pointers to array
+ * @error: pointer to error message
+ *
+ * Return: None, exit status = 98, if failed
+ */
+void validateInput(char **argv, char *error)
+{
+	int i, j;
+
+	for (i = 1; *(argv + i); i++)
 	{
-		printf("0\n");
-		exit(0);
+		for (j = 0; argv[i][j] != '\0'; j++)
+		{
+			if (!(argv[i][j] >= '0' && argv[i][j] <= '9'))
+				printError(error);
+		}
 	}
 }
 
 /**
- * _initialize_array - set memery to zero in a new array
- * @ar: char array.
- * @lar: length of the char array.
+ * removeZeros - remove trailing zeros
+ * @s: pointer to string
  *
- * Return: pointer of a char array.
+ * Return: pointer to string starting with a integer > 0
  */
-char *_initialize_array(char *ar, int lar)
-{
-	int i = 0;
 
-	for (i = 0; i < lar; i++)
-		ar[i] = '0';
-	ar[lar] = '\0';
-	return (ar);
+char *removeZeros(char *s)
+{
+	int i;
+
+	for (i = 0; s[i] != '\0'; i++)
+	{
+		if (s[i] == 0)
+			continue;
+		else
+			return (s + i);
+	}
+	return (s);
 }
 
 /**
- * _checknum - determines length of the number
- * and checks if number is in base 10.
- * @argv: arguments vector.
- * @n: row of the array.
+ * getNumericValue - char to integer
+ * @s: char variable
  *
- * Return: length of the number.
+ * Return: integer
  */
-int _checknum(char *argv[], int n)
+int getNumericValue(char s)
 {
-	int ln;
+	return (s - '0');
+}
 
-	for (ln = 0; argv[n][ln]; ln++)
-		if (!isdigit(argv[n][ln]))
+/**
+ * zero - initialize elements to 0
+ * @p: pointer to array of integer
+ * @length: length of array, integer
+ *
+ * Return: None
+ */
+void zero(int *p, int length)
+{
+	int i;
+
+	for (i = 0; i < length; i++)
+		p[i] = 0;
+}
+
+/**
+ * _strlen - length of string
+ * @s: pointer to string
+ *
+ * Return: integer, length of string
+ */
+int _strlen(char *s)
+{
+	int i;
+
+	for (i = 0; s[i] != '\0'; i++)
+		;
+	return (i);
+}
+
+/**
+ * join - join two strings of integers together
+ * @s1: pointer to string 1
+ * @s2: pointer to string 2
+ * @len1: length of string 1
+ * @len2: length of string 2
+ * @length: total length of new memory
+ *
+ * Return: pointer to allocated memory
+ */
+int *join(char *s1, char *s2, int len1, int len2, int length)
+{
+	int i, *p;
+
+	p = malloc(length * sizeof(*p));
+	for (i = 0; i < len1 && s1[i] != '\0'; i++)
+		p[i] = getNumericValue(s1[i]);
+	for (i = 0; i < len2 && s2[i] != '\0'; i++)
+		p[len1 + i] = getNumericValue(s2[i]);
+	return (p);
+}
+
+/**
+ * array - multiply integers and store them in a grid
+ * @p: pointer to intgers
+ * @grid: pointer to grid
+ * @len1: width determinant, integer
+ * @len2: height of grid, integer
+ * @length: width of grid, integer
+ *
+ * Return: None
+ */
+void array(int *p, int **grid, int len1, int len2, int length)
+{
+	int i, j, x, k = 0;
+	int value = 0, remainder = 0, product = 0;
+
+	for (i = 0; i < len2; i++)
+	{
+		grid[i] = malloc(length * sizeof(**grid));
+		if (grid[i] == NULL)
 		{
-			printf("Error\n");
-			exit(98);
+			for ( ; i >= 0; )
+				free(grid[i]);
+			free(grid);
+			exit(1);
 		}
-
-	return (ln);
+		zero(grid[i], length);
+		k = length - 1 - i;
+		for (j = len1 - 1, x = 0; j >= 0; j--, x++)
+		{
+			product = (p[j] * p[k]) + remainder;
+			remainder = product / 10;
+			value = product % 10;
+			grid[i][k - x] = value;
+			if (j == 0 && remainder)
+				grid[i][k - x - 1] = remainder;
+		}
+		remainder = 0;
+	}
+	free(p);
 }
 
 /**
- * main - Entry point.
- * program that multiplies two positive numbers.
- * @argc: number of arguments.
- * @argv: arguments vector.
+ * add - sum grid column
+ * @out: pointer to memory of final result
+ * @grid: pointer to grid
+ * @len2: grid height
+ * @length: grid width
  *
- * Return: 0 - success.
+ * Return: None
+ */
+void add(int *out, int **grid, int len2, int length)
+{
+	int i, j, sum;
+	int value = 0, remainder = 0;
+
+	for (i = length - 1; i >= 0; i--)
+	{
+		sum = 0;
+		for (j = 0; j < len2; j++)
+			sum += grid[j][i];
+		sum += remainder;
+		value = sum % 10;
+		remainder = sum / 10;
+		out[i] = value;
+	}
+
+	for (i = len2 - 1; i >= 0; i--)
+		free(grid[i]);
+	free(grid);
+}
+
+/**
+ * output - print final result
+ * @out: pointer to array of integers
+ * @length: length of array
+ *
+ * Return: None
+ */
+void output(int *out, int length)
+{
+	int i, l = 0;
+
+	for (i = 0; (i < length && out[i] == 0); i++)
+	{
+		if (i == length - 1)
+		{
+			_putchar('0'), _putchar('\n');
+			free(out);
+			exit(0);
+		}
+	}
+
+	for (i = 0; i < length; i++)
+	{
+		if (out[i] == 0 && l == 0)
+			continue;
+		_putchar((char) out[i] + '0');
+		l++;
+	}
+	_putchar('\n');
+	free(out);
+	exit(0);
+}
+
+/**
+ * main - a program that multiplies two positive numbers.
+ * @argc: integer, number of arguments
+ * @argv: pointer to an array of pointers to strings
+ *
+ * Return: Always 0 (success)
  */
 int main(int argc, char *argv[])
 {
-	int ln1, ln2, lnout, add, addl, i, j, k, ca;
-	char *nout;
+	char *s1 = removeZeros(*(argv + 1));
+	char *s2 = removeZeros(*(argv + 2)), *error = "Error\n";
+	int *p, *out, **grid;
+	int len1 = 0, len2 = 0, length = 0;
 
-	if (argc != 3)
-		printf("Error\n"), exit(98);
-	ln1 = _checknum(argv, 1), ln2 = _checknum(argv, 2);
-	_is_zero(argv), lnout = ln1 + ln2, nout = malloc(lnout + 1);
-	if (nout == NULL)
-		printf("Error\n"), exit(98);
-	nout = _initialize_array(nout, lnout);
-	k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
-	for (; k >= 0; k--, i--)
+	checkInput(argc, error);
+	validateInput(argv, error);
+	len1 = _strlen(s1), len2 = _strlen(s2);
+	length = len1 + len2;
+	p = join(s1, s2, len1, len2, length);
+	grid = malloc(len2 * sizeof(*grid));
+	if (grid == NULL)
 	{
-		if (i < 0)
-		{
-			if (addl > 0)
-			{
-				add = (nout[k] - '0') + addl;
-				if (add > 9)
-					nout[k - 1] = (add / 10) + '0';
-				nout[k] = (add % 10) + '0';
-			}
-			i = ln1 - 1, j--, addl = 0, ca++, k = lnout - (1 + ca);
-		}
-		if (j < 0)
-		{
-			if (nout[0] != '0')
-				break;
-			lnout--;
-			free(nout), nout = malloc(lnout + 1), nout = _initialize_array(nout, lnout);
-			k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
-		}
-		if (j >= 0)
-		{
-			add = ((argv[1][i] - '0') * (argv[2][j] - '0')) + (nout[k] - '0') + addl;
-			addl = add / 10, nout[k] = (add % 10) + '0';
-		}
+		free(grid);
+		exit(1);
 	}
-	printf("%s\n", nout);
+	array(p, grid, len1, len2, length);
+	out = malloc(length * sizeof(*out));
+	if (out == NULL)
+	{
+		free(out);
+		exit(1);
+	}
+	add(out, grid, len2, length);
+	output(out, length);
 	return (0);
 }
 
