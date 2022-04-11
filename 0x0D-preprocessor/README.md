@@ -12,3 +12,6 @@ The learning objectives of the topic are as follows:
 
 ### 2. File Name
 [2-main.c](./2-main.c) a program that prints the name of the file it was compiled from, followed by a new line.
+
+### 3. Function-like macro
+[3-function_like_macro.h](./3-function_like_macro.h) a function-like macro ABS(x) that computes the absolute value of a number x.
