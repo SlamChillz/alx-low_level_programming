@@ -50,27 +50,6 @@ void validateInput(char **argv, char *error)
 }
 
 /**
- * removeZeros - remove trailing zeros
- * @s: pointer to string
- *
- * Return: pointer to string starting with a integer > 0
- */
-
-char *removeZeros(char *s)
-{
-	int i;
-
-	for (i = 0; s[i] != '\0'; i++)
-	{
-		if (s[i] == 0)
-			continue;
-		else
-			return (s + i);
-	}
-	return (s);
-}
-
-/**
  * getNumericValue - char to integer
  * @s: char variable
  *
@@ -126,6 +105,11 @@ int *join(char *s1, char *s2, int len1, int len2, int length)
 	int i, *p;
 
 	p = malloc(length * sizeof(*p));
+	if (p == NULL)
+	{
+		free(p);
+		exit(1);
+	}
 	for (i = 0; i < len1 && s1[i] != '\0'; i++)
 		p[i] = getNumericValue(s1[i]);
 	for (i = 0; i < len2 && s2[i] != '\0'; i++)
@@ -155,7 +139,7 @@ void array(int *p, int **grid, int len1, int len2, int length)
 		{
 			for ( ; i >= 0; )
 				free(grid[i]);
-			free(grid);
+			free(grid), free(p);
 			exit(1);
 		}
 		zero(grid[i], length);
@@ -215,16 +199,6 @@ void output(int *out, int length)
 {
 	int i, l = 0;
 
-	for (i = 0; (i < length && out[i] == 0); i++)
-	{
-		if (i == length - 1)
-		{
-			_putchar('0'), _putchar('\n');
-			free(out);
-			exit(0);
-		}
-	}
-
 	for (i = 0; i < length; i++)
 	{
 		if (out[i] == 0 && l == 0)
@@ -232,6 +206,8 @@ void output(int *out, int length)
 		_putchar((char) out[i] + '0');
 		l++;
 	}
+	if (l == 0)
+		_putchar('0');
 	_putchar('\n');
 	free(out);
 	exit(0);
@@ -246,8 +222,8 @@ void output(int *out, int length)
  */
 int main(int argc, char *argv[])
 {
-	char *s1 = removeZeros(*(argv + 1));
-	char *s2 = removeZeros(*(argv + 2)), *error = "Error\n";
+	char *s1 = *(argv + 1);
+	char *s2 = *(argv + 2), *error = "Error\n";
 	int *p, *out, **grid;
 	int len1 = 0, len2 = 0, length = 0;
 
@@ -259,14 +235,14 @@ int main(int argc, char *argv[])
 	grid = malloc(len2 * sizeof(*grid));
 	if (grid == NULL)
 	{
-		free(grid);
+		free(grid), free(p);
 		exit(1);
 	}
 	array(p, grid, len1, len2, length);
 	out = malloc(length * sizeof(*out));
 	if (out == NULL)
 	{
-		free(out);
+		free(out), free(grid);
 		exit(1);
 	}
 	add(out, grid, len2, length);
