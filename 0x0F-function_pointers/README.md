@@ -36,6 +36,15 @@ The objectives of this project are:
 - if the number of arguments is wrong, print Error, followed by a new line, and exit with the status 98
 - if the operator is none of the above, print Error, followed by a new line, and exit with the status 99
 - if the user tries to divide (/ or %) by 0, print Error, followed by a new line, and exit with the status 100
-[3-calc.h](./3-calc.h) contain all the function prototypes and data structures used by the program.
-[3-op_functions.c](./3-op_functions.c) contains all the operation functions.
-[3-get_op_func.c](./3-get_op_func.c) contain the function that selects the correct function to perform the operation asked by the user.
+- [3-calc.h](./3-calc.h) contain all the function prototypes and data structures used by the program.
+- [3-op_functions.c](./3-op_functions.c) contains all the operation functions.
+- [3-get_op_func.c](./3-get_op_func.c) contain the function that selects the correct function to perform the operation asked by the user.
+
+### 4. Most hackers are young because young people tend to be adaptable. As long as you remain adaptable, you can always be a good hacker
+[100-main_opcodes.c](./100-main_opcodes.c) a program that prints the opcodes of its own main function.
+- Usage: ./main number_of_bytes
+- Output format:
+	- the opcodes should be printed in hexadecimal, lowercase
+	- each opcode is two char long
+	- listing ends with a new line
+
