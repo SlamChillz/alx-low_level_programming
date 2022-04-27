@@ -1,97 +1,68 @@
 #include "lists.h"
-
-size_t looped_listint_count(listint_t *head);
-size_t free_listint_safe(listint_t **h);
+#include <stdio.h>
 
 /**
- * looped_listint_count - Counts the number of unique nodes
- *                      in a looped listint_t linked list.
- * @head: A pointer to the head of the listint_t to check.
+ * _find_loop - finds the loop in a linked list
+ * @head: pointer to the head node
  *
- * Return: If the list is not looped - 0.
- *         Otherwise - the number of unique nodes in the list.
+ * Return: pointer to the loop or NULL if no loop
  */
-size_t looped_listint_count(listint_t *head)
+listint_t *_find_loop(listint_t *head)
 {
-	listint_t *tortoise, *hare;
-	size_t nodes = 1;
+	listint_t *one, *two;
 
 	if (head == NULL || head->next == NULL)
-		return (0);
+		return (NULL);
+	one = head, two = head;
 
-	tortoise = head->next;
-	hare = (head->next)->next;
-
-	while (hare)
+	one = one->next, two = two->next->next;
+	while (two && two->next)
 	{
-		if (tortoise == hare)
-		{
-			tortoise = head;
-			while (tortoise != hare)
-			{
-				nodes++;
-				tortoise = tortoise->next;
-				hare = hare->next;
-			}
-
-			tortoise = tortoise->next;
-			while (tortoise != hare)
-			{
-				nodes++;
-				tortoise = tortoise->next;
-			}
-
-			return (nodes);
-		}
-
-		tortoise = tortoise->next;
-		hare = (hare->next)->next;
+		if (one == two)
+			break;
+		one = one->next;
+		two = two->next->next;
 	}
-
-	return (0);
+	if (one != two)
+		return (NULL);
+	one = head;
+	while (one != two)
+	{
+		one = one->next;
+		two = two->next;
+	}
+	return (one);
 }
 
 /**
- * free_listint_safe - Frees a listint_t list safely (ie.
- *                     can free lists containing loops)
- * @h: A pointer to the address of
- *     the head of the listint_t list.
+ * free_listint_safe - free linked lists with a loop safely
+ * @head: head node of linked list
  *
- * Return: The size of the list that was freed.
- *
- * Description: The function sets the head to NULL.
+ * Description: The list should be circled once, set head to NULL
+ * Return: integer, number of nodes free'd
  */
-size_t free_listint_safe(listint_t **h)
+
+size_t free_listint_safe(listint_t **head)
 {
-	listint_t *tmp;
-	size_t nodes, index;
+	listint_t *hold, *current;
+	size_t count, repeat;
 
-	nodes = looped_listint_count(*h);
+	if (*head == NULL)
+		return (0);
 
-	if (nodes == 0)
+	hold = _find_loop(*head), count = 0, repeat = 0;
+
+	while (*head != NULL)
 	{
-		for (; h != NULL && *h != NULL; nodes++)
-		{
-			tmp = (*h)->next;
-			free(*h);
-			*h = tmp;
-		}
+		if (hold != NULL && hold == *head)
+			repeat += 1;
+
+		if (repeat == 2)
+			break;
+		current = *head, *head = current->next;
+		free(current), count += 1;
 	}
-
-	else
-	{
-		for (index = 0; index < nodes; index++)
-		{
-			tmp = (*h)->next;
-			free(*h);
-			*h = tmp;
-		}
-
-		*h = NULL;
-	}
-
-	h = NULL;
-
-	return (nodes);
+	*head = NULL;
+	return (count);
 }
 
