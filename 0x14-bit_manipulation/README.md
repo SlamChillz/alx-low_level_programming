@@ -42,3 +42,13 @@ The objectives of this project are:
 - Prototype: unsigned int flip_bits(unsigned long int n, unsigned long int m);
 - You are not allowed to use the % or / operators
 
+### 6. Endianness
+[100-get_endianness.c](./100-get_endianness.c) a function that checks the endianness.
+- Prototype: `int get_endianness(void)`
+- Returns: 0 if big endian, 1 if little endian
+
+### 7. Crackme3
+[101-password](./101-password) the password for this program.
+- Save the password in the file 101-password
+- Your file should contain the exact password, no new line, no extra space
+
