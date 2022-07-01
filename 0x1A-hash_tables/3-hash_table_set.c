@@ -11,59 +11,39 @@
 int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
 	unsigned long int index;
-	hash_node_t *index_head_node;
-	int status = EXIT_FAILURE;
+	hash_node_t *new, *current;
+	char *new_key, *new_value;
 
-	if (!ht || !ht->array || !key || (strlen(key) == 0))
-		return (status);
+	if ((ht == NULL) || (ht->array == NULL) || (key == NULL) ||
+			(strlen(key) == 0) || (value == NULL))
+		return (0);
 
-	index = key_index((unsigned char *) key, ht->size);
-
-	if (index >= ht->size)
-		return (status);
-
-	index_head_node = ht->array[index];
-
-	ht->array[index] = insert_node(&index_head_node, key, value, &status);
-
-	return (status);
-}
-
-/**
- * insert_node - add a node to the top of the linked list
- * @head: pointer to the linked list
- * @key: string, key of new node added
- * @value: string, value of new node to be added
- * @status: pointer to an integer, to track status of insertion
- *
- * Return: 1 on success, 0 on failure.
- */
-hash_node_t *insert_node(hash_node_t **head,
-		const char *key, const char *value, int *status)
-{
-	hash_node_t *new, *h = *head;
-
-	while (h != NULL)
+	index = key_index((const unsigned char *) key, ht->size);
+	current = ht->array[index];
+	new_value = strdup(value);
+	if (new_value == NULL)
+		return (0);
+	while (current != NULL)
 	{
-		if (strcmp(h->key, key) == 0)
+		if (strcmp(current->key, key) == 0)
 		{
-			free(h->value);
-			h->value = strdup(value);
-			*status = EXIT_SUCCESS;
-			return (*head);
+			free(current->value);
+			current->value = new_value;
+			return (1);
 		}
-		h = h->next;
+		current = current->next;
 	}
-
 	new = malloc(sizeof(hash_node_t));
-
-	if (new == NULL)
-		return (*head);
-
-	new->key = strdup(key), new->value = strdup(value);
-	new->next = *head, *head = new;
-
-	*status = EXIT_SUCCESS;
-	return (*head);
+	new_key = strdup(key);
+	if (new == NULL || new_key == NULL)
+	{
+		free(new_value), free(new_key), free(new);
+		return (0);
+	}
+	new->key = new_key;
+	new->value = new_value;
+	new->next = ht->array[index];
+	ht->array[index] = new;
+	return (1);
 }
 
