@@ -11,7 +11,10 @@ void hash_table_delete(hash_table_t *ht)
 	unsigned long int i;
 	hash_node_t *address;
 
-	if (ht != NULL)
+	if (ht == NULL)
+		return;
+
+	if (ht->array != NULL)
 	{
 		for (i = 0; i < ht->size; i++)
 		{
