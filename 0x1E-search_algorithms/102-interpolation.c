@@ -20,10 +20,8 @@ int interpolation_search(int *array, size_t size, int value)
 		p = l + (((double) (h - l) /
 			(array[h] - array[l])) * (value - array[l]));
 		if (p < size)
-		{
 			printf("Value checked array[%ld] = [%d]\n",
 					p, array[p]);
-		}
 		else
 		{
 			printf("Value checked array[%ld] is out of range\n",
