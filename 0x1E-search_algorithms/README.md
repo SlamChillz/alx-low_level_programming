@@ -12,7 +12,7 @@ The objectives of this project are:
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 <source files> [-lm] -o <exec>
 ```
 
-## Helpers
+## Utilities
 
 * [listint](./listint): contains helper functions for task [12](./105-jump_list.c).
 
